@@ -1,0 +1,93 @@
+<div class="page-center">
+
+    <div class="page-header">
+        <div>
+            <h1>My Hushes</h1>
+            <p class="sub" *ngIf="!loading">{{ items.length }} hush{{ items.length !== 1 ? 's' : '' }}</p>
+        </div>
+        <button class="btn-primary" (click)="toggleCreateForm()">
+            {{ showCreateForm ? 'Cancel' : '+ New hush' }}
+        </button>
+    </div>
+
+    <!-- Quick create form -->
+    <div class="create-panel" *ngIf="showCreateForm">
+        <div class="field">
+            <label>Title</label>
+            <input type="text" [(ngModel)]="createForm.title" placeholder="Title" [disabled]="creating" />
+        </div>
+        <div class="field">
+            <label>Content</label>
+            <textarea [(ngModel)]="createForm.content" rows="6" placeholder="Your content..." [disabled]="creating"></textarea>
+        </div>
+        <div class="field">
+            <label>Password <span class="optional">(optional)</span></label>
+            <input type="password" [(ngModel)]="createForm.password" placeholder="Leave blank for public" [disabled]="creating" />
+        </div>
+        <div class="panel-footer">
+            <span class="error" *ngIf="createError">{{ createError }}</span>
+            <button class="btn-primary" (click)="create()" [disabled]="creating">
+                {{ creating ? 'Creating...' : 'Create' }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="state-msg" *ngIf="loading">Loading...</div>
+
+    <!-- Empty -->
+    <div class="state-msg" *ngIf="!loading && items.length === 0 && !showCreateForm">
+        No hushes yet. Click <strong>New hush</strong> to create one.
+    </div>
+
+    <!-- Hushes list -->
+    <div class="items-list" *ngIf="!loading && items.length > 0">
+        <div class="item-row" *ngFor="let item of items">
+
+            <!-- View mode -->
+            <ng-container *ngIf="editingHash !== item.hash">
+                <div class="item-info">
+                    <div class="item-title-row">
+                        <a [routerLink]="['/items', item.hash]" class="item-title">{{ item.title }}</a>
+                        <span class="badge" *ngIf="item.passwordProtected">🔒</span>
+                    </div>
+                    <p class="item-preview">{{ item.content }}</p>
+                    <div class="item-meta">
+                        <span class="hash-tag">{{ item.hash }}</span>
+                        <span class="dot">·</span>
+                        <span>{{ formatDate(item.updatedAt) }}</span>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <button class="btn-text" (click)="startEdit(item)">Edit</button>
+                    <button class="btn-text danger" (click)="delete(item.hash)">Delete</button>
+                </div>
+            </ng-container>
+
+            <!-- Edit mode -->
+            <div class="inline-edit" *ngIf="editingHash === item.hash">
+                <div class="field">
+                    <label>Title</label>
+                    <input type="text" [(ngModel)]="editForm.title" [disabled]="saving" />
+                </div>
+                <div class="field">
+                    <label>Content</label>
+                    <textarea [(ngModel)]="editForm.content" rows="6" [disabled]="saving"></textarea>
+                </div>
+                <div class="field">
+                    <label>Change password <span class="optional">(blank = keep, space = remove)</span></label>
+                    <input type="password" [(ngModel)]="editForm.password" [disabled]="saving" />
+                </div>
+                <div class="edit-footer">
+                    <span class="error" *ngIf="editError">{{ editError }}</span>
+                    <button class="btn-secondary" (click)="cancelEdit()" [disabled]="saving">Cancel</button>
+                    <button class="btn-primary" (click)="saveEdit(item.hash)" [disabled]="saving">
+                        {{ saving ? 'Saving...' : 'Save' }}
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

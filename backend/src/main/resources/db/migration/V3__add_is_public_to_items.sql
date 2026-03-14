@@ -1,0 +1,2 @@
+ALTER TABLE items ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT TRUE;
+CREATE INDEX IF NOT EXISTS idx_items_created_at ON items (created_at DESC);

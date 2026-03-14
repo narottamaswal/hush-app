@@ -8,4 +8,4 @@ RUN mvn clean package -DskipTests -q
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 COPY --from=build /app/target/*.jar hushapp.jar
-ENTRYPOINT ["java", "-jar", "hushapp.jar"]
+ENTRYPOINT ["sh", "-c", "java -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:-prod} -jar hushapp.jar"]

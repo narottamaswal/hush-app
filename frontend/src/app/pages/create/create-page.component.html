@@ -15,7 +15,7 @@
   </div>
 
   <div class="create-form" *ngIf="auth.user()">
-    <h2>New hush</h2>
+    <h2>New item</h2>
 
     <div class="field">
       <label for="title">Title</label>
@@ -54,7 +54,7 @@
     <div class="form-footer">
       <span class="error" *ngIf="error">{{ error }}</span>
       <button class="btn-primary" (click)="submit()" [disabled]="saving">
-        {{ saving ? 'Creating...' : 'Create hush' }}
+        {{ saving ? 'Creating...' : 'Create' }}
       </button>
     </div>
   </div>

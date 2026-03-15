@@ -6,7 +6,7 @@
             <p class="sub" *ngIf="!loading">{{ items.length }} hush{{ items.length !== 1 ? 's' : '' }}</p>
         </div>
         <button class="btn-primary" (click)="toggleCreateForm()">
-            {{ showCreateForm ? 'Cancel' : '+ New hush' }}
+            {{ showCreateForm ? 'Cancel' : '+ New item' }}
         </button>
     </div>
 
@@ -37,7 +37,7 @@
 
     <!-- Empty -->
     <div class="state-msg" *ngIf="!loading && items.length === 0 && !showCreateForm">
-        No hushes yet. Click <strong>New hush</strong> to create one.
+        No items yet. Click <strong>New item</strong> to create one.
     </div>
 
     <!-- Hushes list -->

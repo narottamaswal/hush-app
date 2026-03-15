@@ -50,15 +50,8 @@ if you get an error saying the app is restricted to organisation users, go to ap
 
 ## database setup
 
-**option 1 — neon (easiest, free, cloud)**
 
-go to neon.tech, create a project, copy the connection string. it looks like this:
-
-```
-postgresql://user:password@ep-something.aws.neon.tech/neondb?sslmode=require
-```
-
-**option 2 — local docker**
+**option 1 — local docker**
 
 ```bash
 docker run -d \
@@ -143,61 +136,6 @@ this builds angular, compiles spring boot, and starts everything. only two conta
 
 ---
 
-## project structure
-
-```
-hushapp/
-├── backend/
-│   ├── src/main/java/com/pastebin/app/
-│   │   ├── config/          security, oauth handler, spa routing filter
-│   │   ├── controller/      auth and items api endpoints
-│   │   ├── model/           database entities and dtos
-│   │   ├── repository/      database queries
-│   │   └── service/         business logic, avatar generation
-│   └── src/main/resources/
-│       ├── db/migration/    flyway sql scripts
-│       └── application.properties
-├── frontend/
-│   └── src/app/
-│       ├── models/          typescript interfaces
-│       ├── pages/           create, view, my-items pages
-│       └── services/        api calls and auth state
-├── Dockerfile               builds frontend + backend into one jar
-├── docker-compose.yml
-└── .env
-```
-
----
-
-## api endpoints
-
-| method | path | auth required |
-|--------|------|---------------|
-| get | /api/me | no (returns 401 if not logged in) |
-| post | /api/me/avatar | yes |
-| get | /api/items/mine | yes |
-| post | /api/items | yes |
-| get | /api/items/:hash | no |
-| get | /api/items/:hash/meta | no |
-| post | /api/items/:hash/unlock | no |
-| put | /api/items/:hash | yes (owner only) |
-| delete | /api/items/:hash | yes (owner only) |
-
----
-
-## a few things worth knowing
-
-**avatar** — when you log in for the first time it generates an initials-based avatar using your name in java on the server side. it picks a random dark background and a random light text colour and stores it as a base64 png in the database. no external service involved.
-
-**passwords** — paste passwords are hashed with sha-256 before storing. the actual password is never saved in the database.
-
-**hash links** — each paste gets an 8 character random alphanumeric hash like `Qnm84666`. it checks for collisions so no two pastes get the same link.
-
-**flyway** — database schema is managed by flyway migrations in `backend/src/main/resources/db/migration/`. if you ever need to change the schema, add a new file like `V3__your_change.sql` and it runs automatically on next startup. never edit existing migration files.
-
-**same origin** — the frontend is served by spring boot itself, not a separate nginx. this means no cors issues and session cookies just work without any extra config.
-
----
 
 ## common issues
 

@@ -6,7 +6,7 @@ import { Item } from '../models/item.model';
 @Injectable({ providedIn: 'root' })
 export class ItemService {
   private http = inject(HttpClient);
-  private base = 'http://localhost:8080/api/items';
+  private base = '/api/items';
 
   getMine(): Observable<Item[]> {
     return this.http.get<Item[]>(`${this.base}/mine`);

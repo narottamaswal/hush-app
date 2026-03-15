@@ -14,4 +14,3 @@ spring:
             client-id: ${OAUTH2_CLIENT_ID}
             client-secret: ${OAUTH2_CLIENT_SECRET}
             scope: openid,profile,email
-            redirect-uri: ${APP_BASE_URL}/login/oauth2/code/google

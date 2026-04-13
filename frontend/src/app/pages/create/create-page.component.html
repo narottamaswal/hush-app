@@ -14,12 +14,12 @@
                 <path fill="#1565C0"
                       d="M43.6 20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.2 5.2C41.1 35.7 44 30.3 44 24c0-1.3-.1-2.7-.4-4z"/>
             </svg>
-            sign in with Google to create
+            Sign in with Google to create
         </button>
     </div>
 
     <div class="create-form-container" *ngIf="auth.user()">
-        <h2>new item</h2>
+        <h2>New item</h2>
         <app-item-form
                 [saving]="saving"
                 [externalError]="error"

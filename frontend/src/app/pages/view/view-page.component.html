@@ -1,23 +1,23 @@
 <div class="page-center">
     <!-- Viewed -->
-    <div class="state-msg" *ngIf="state === 'already-viewed'">the item you're trying to access is already viewed.</div>
+    <div class="state-msg" *ngIf="state === 'already-viewed'">The item you're trying to access is already viewed.</div>
 
     <!-- LOADING -->
-    <div class="state-msg" *ngIf="state === 'loading'">loading...</div>
+    <div class="state-msg" *ngIf="state === 'loading'">Loading...</div>
 
     <!-- NOT FOUND -->
     <div class="state-msg" *ngIf="state === 'not-found'">
         <p>Item not found.</p>
-        <a routerLink="/">← back to home</a>
+        <a routerLink="/">← Back to home</a>
     </div>
 
     <!-- LOCKED -->
     <div class="locked-box" *ngIf="state === 'locked'">
         <div class="lock-icon">🔒</div>
         <h2>{{ item?.title }}</h2>
-        <p class="lock-sub">this hush is password protected.</p>
+        <p class="lock-sub">This hush is password protected.</p>
         <div class="field">
-            <label for="pwd">password</label>
+            <label for="pwd">Password</label>
             <input
                     id="pwd"
                     type="password"
@@ -29,7 +29,7 @@
         </div>
         <div class="lock-footer">
             <span class="error" *ngIf="passwordError">{{ passwordError }}</span>
-            <button class="btn-primary" (click)="load()">unlock</button>
+            <button class="btn-primary" (click)="load()">Unlock</button>
         </div>
     </div>
 
@@ -52,8 +52,8 @@
         </div>
 
         <div class="item-actions" *ngIf="isOwner()">
-            <button class="btn-secondary" (click)="startEdit()">edit</button>
-            <button class="btn-danger" (click)="deleteItem()">delete</button>
+            <button class="btn-secondary" (click)="startEdit()">Edit</button>
+            <button class="btn-danger" (click)="deleteItem()">Delete</button>
         </div>
 
         <div class="item-content">
@@ -61,13 +61,13 @@
         </div>
 
         <div class="back-row">
-            <a routerLink="/">← back to list</a>
+            <a routerLink="/">← Back to list</a>
         </div>
     </ng-container>
 
     <!-- EDIT -->
     <ng-container *ngIf="state === 'edit' && item">
-        <h2 class="edit-heading">edit hush</h2>
+        <h2 class="edit-heading">Edit hush</h2>
         <app-item-form
                 [initialData]="item"
                 [isEdit]="true"

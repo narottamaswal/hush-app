@@ -2,11 +2,11 @@
 
     <div class="page-header">
         <div>
-            <h1>my hushes</h1>
+            <h1>My hushes</h1>
             <p class="sub" *ngIf="!loading">{{ items.length }} hush{{ items.length !== 1 ? 's' : '' }}</p>
         </div>
         <button class="btn-primary" (click)="toggleCreateForm()">
-            {{ showCreateForm ? 'cancel' : '+ new item' }}
+            {{ showCreateForm ? 'Cancel' : '+ New item' }}
         </button>
     </div>
 
@@ -23,7 +23,7 @@
     <div class="state-msg" *ngIf="loading">loading...</div>
 
     <div class="state-msg" *ngIf="!loading && items.length === 0 && !showCreateForm">
-        no items yet. click <strong>new item</strong> to create one.
+        No items yet. click <strong>New item</strong> to create one.
     </div>
 
     <div class="items-list" *ngIf="!loading && items.length > 0">
@@ -43,8 +43,8 @@
                     </div>
                 </div>
                 <div class="item-actions">
-                    <button class="btn-text" (click)="startEdit(item)">edit</button>
-                    <button class="btn-text danger" (click)="delete(item.hash)">delete</button>
+                    <button class="btn-text" (click)="startEdit(item)">Edit</button>
+                    <button class="btn-text danger" (click)="delete(item.hash)">Delete</button>
                 </div>
             </ng-container>
 

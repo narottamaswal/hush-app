@@ -38,6 +38,9 @@
     line-height: 1.6;
     font-size: 0.875rem;
     font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+    &:focus { border-color: #999; }
+    &::placeholder { color: #bbb; }
+    &:disabled { background: #fafafa; color: #999; cursor: not-allowed; }
   }
 }
 

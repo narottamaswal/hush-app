@@ -1,23 +1,23 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="shared-form">
 
     <div class="field">
-        <label for="title">title</label>
-        <input id="title" type="text" formControlName="title" placeholder="give it a title" [attr.disabled]="saving ? true : null" />
-        <span class="validation-error" *ngIf="form.get('title')?.touched && form.get('title')?.hasError('required')">title is required.</span>
+        <label for="title">Title</label>
+        <input id="title" type="text" formControlName="title" placeholder="Give it a title" [attr.disabled]="saving ? true : null" />
+        <span class="validation-error" *ngIf="form.get('title')?.touched && form.get('title')?.hasError('required')">Title is required.</span>
     </div>
 
     <div class="field">
-        <label for="content">content</label>
-        <textarea id="content" formControlName="content" placeholder="paste your text, code, or notes here..." rows="8" [attr.disabled]="saving ? true : null"></textarea>
+        <label for="content">Content</label>
+        <textarea id="content" formControlName="content" placeholder="Paste your text, code, or notes here..." rows="12" [attr.disabled]="saving ? true : null"></textarea>
         <span class="validation-error" *ngIf="form.get('content')?.touched && form.get('content')?.hasError('required')">content is required.</span>
     </div>
 
     <div class="field">
-        <label for="password">{{ isEdit ? 'change password' : 'password' }} <span class="optional">{{ isEdit ? '(leave blank to keep current)' : '(optional)' }}</span></label>
-        <input id="password" type="password" formControlName="password" placeholder="leave blank for public access" [attr.disabled]="saving ? true : null" />
+        <label for="password">{{ isEdit ? 'Change password' : 'Password' }} <span class="optional">{{ isEdit ? '(Leave blank to keep current)' : '(optional)' }}</span></label>
+        <input id="password" type="password" formControlName="password" placeholder="Leave blank for public access" [attr.disabled]="saving ? true : null" />
     </div>
     <div class="field">
-        <label for="alias">custom alias <span class="optional">(optional)</span></label>
+        <label for="alias">Custom alias <span class="optional">(optional)</span></label>
         <div class="input-with-prefix">
             <span class="prefix">hush.com/</span>
             <input id="alias" type="text"   maxlength="8" formControlName="alias" placeholder="my-custom-url" [attr.disabled]="saving ? true : null" />
@@ -42,7 +42,7 @@
         <label class="toggle-control">
             <input type="checkbox" formControlName="noForward" [attr.disabled]="saving ? true : null">
             <span class="control-indicator"></span>
-            <span class="optional">(prevents copying/sharing)</span>
+            <span class="optional">(prevents forwarding)</span>
         </label>
     </div>
 
@@ -57,9 +57,9 @@
 
     <div class="form-footer">
         <span class="error" *ngIf="externalError">{{ externalError }}</span>
-        <button type="button" class="btn-secondary" *ngIf="showCancel" (click)="onCancel()" [disabled]="saving">cancel</button>
+        <button type="button" class="btn-secondary" *ngIf="showCancel" (click)="onCancel()" [disabled]="saving">Cancel</button>
         <button type="submit" class="btn-primary" [disabled]="saving || form.invalid || form.pending">
-            {{ saving ? 'Saving...' : (isEdit ? 'save changes' : 'create') }}
+            {{ saving ? 'Saving...' : (isEdit ? 'Save changes' : 'Create') }}
         </button>
     </div>
 </form>

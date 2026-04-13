@@ -1,33 +1,52 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { User } from '../models/item.model';
+import {inject, Injectable, signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {User} from '../models/item.model';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class AuthService {
-  private http = inject(HttpClient);
-  private base = '/api';
+    private http = inject(HttpClient);
+    private base = '/api';
 
-  user = signal<User | null>(null);
-  checked = signal(false);
+    private _user = signal<User | null | undefined>(undefined);
+    readonly user = this._user.asReadonly();
 
-  loadUser() {
-    this.http.get<User>(`${this.base}/me`).subscribe({
-      next: (u) => {
-        this.user.set(u);
-        this.checked.set(true);
-      },
-      error: () => {
-        this.user.set(null);
-        this.checked.set(true);
-      }
-    });
-  }
+    checked = signal(false);
 
-  signIn() {
-    window.location.href = '/oauth2/authorization/google';
-  }
+    constructor() {
+        this.initializeAuth();
+    }
 
-  signOut() {
-    window.location.href = '/api/signout';
-  }
+    private initializeAuth() {
+        const savedUser = localStorage.getItem('user_session');
+        if (savedUser) {
+            this._user.set(JSON.parse(savedUser));
+        } else {
+            this._user.set(null);
+        }
+    }
+
+    loadUser() {
+        this.http.get<User>(`${this.base}/me`).subscribe({
+            next: (user) => {
+                localStorage.setItem('user_session', JSON.stringify(user));
+                this._user.set(user);
+                this.checked.set(true);
+            },
+            error: () => {
+                this._user.set(null);
+                this.checked.set(true);
+            }
+        });
+    }
+
+    signIn() {
+        window.location.href = '/oauth2/authorization/google';
+        // window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    }
+
+    signOut() {
+        window.location.href = '/api/signout';
+        localStorage.removeItem('user_session');
+        this._user.set(null);
+    }
 }

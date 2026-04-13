@@ -3,6 +3,7 @@ package com.hush.app.service;
 import com.hush.app.model.AppUser;
 import com.hush.app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

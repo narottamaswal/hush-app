@@ -25,6 +25,7 @@ logging:
         web:
           servlet:
             resource: DEBUG
+        security: DEBUG
 
 server:
   servlet:

@@ -17,8 +17,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    @Value("${app.base-url}")
-    private String baseUrl;
+    @Value("${app.redirect-url}")
+    private String redirectUrl;
 
     private final UserService userService;
     private final AvtarComponent avtarComponent;
@@ -33,7 +33,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         Map<String, Object> attrs = token.getPrincipal().getAttributes();
         String name = (String) attrs.get("name");
         userService.upsert((String) attrs.get("email"), name, avtarComponent.generateAvatar(name));
-        response.sendRedirect(baseUrl);
+        response.sendRedirect(redirectUrl);
     }
 
 

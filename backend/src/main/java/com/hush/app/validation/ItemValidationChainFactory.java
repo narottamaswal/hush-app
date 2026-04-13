@@ -1,0 +1,22 @@
+package com.hush.app.validation;
+
+import com.hush.app.service.HashService;
+import com.hush.app.validation.steps.*;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
+
+@Component
+@AllArgsConstructor
+public class ItemValidationChainFactory {
+
+    private final HashService hashService;
+
+    public ItemValidationStep buildDefaultChain() {
+        ItemValidationStep password    = new PasswordValidationStep(hashService);
+        ItemValidationStep owner    = new OwnerValidationStep();
+        ItemValidationStep viewOnce    = new ViewOnceValidationStep();
+        ItemValidationStep fingerprint = new FingerprintValidationStep();
+        password.setNext(owner).setNext(viewOnce).setNext(fingerprint);
+        return password;
+    }
+}

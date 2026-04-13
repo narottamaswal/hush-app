@@ -5,13 +5,14 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ItemService } from '../../services/item.service';
 import { Item } from '../../models/item.model';
+import {ItemFormComponent} from "../../components/item-form/item-form.component";
 
-type ViewState = 'loading' | 'locked' | 'view' | 'edit' | 'not-found';
+type ViewState = 'loading' | 'locked' | 'view' | 'edit' | 'not-found' | 'already-viewed';
 
 @Component({
   selector: 'app-view-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ItemFormComponent],
   templateUrl: './view-page.component.html',
   styleUrl: './view-page.component.scss'
 })
@@ -28,11 +29,11 @@ export class ViewPageComponent implements OnInit {
   password      = '';
   passwordError = '';
 
-  editForm = { title: '', content: '', password: '' };
   saving   = false;
   editError = '';
-
   copied = false;
+
+  showPasswordPrompt = false;
 
   ngOnInit() {
     this.hash = this.route.snapshot.paramMap.get('hash') ?? '';
@@ -41,23 +42,23 @@ export class ViewPageComponent implements OnInit {
 
   load() {
     this.state = 'loading';
-
-    this.itemSvc.get(this.hash).subscribe({
+    this.passwordError = '';
+    this.itemSvc.get(this.hash,this.password).subscribe({
       next: (item) => {
         this.item  = item;
         this.state = 'view';
       },
       error: (err) => {
-        if (err.status === 403 || err.status === 404) {
-          this.itemSvc.getMeta(this.hash).subscribe({
-            next: (meta) => {
-              this.item  = meta;
-              this.state = meta.passwordProtected ? 'locked' : 'not-found';
-            },
-            error: () => { this.state = 'not-found'; }
-          });
-        } else {
+        if (err.status===404 || err.status===410){
           this.state = 'not-found';
+        }else if (err.status === 403 && err.error?.passwordProtected) {
+          this.state = 'locked';
+          this.passwordError = 'Wrong password.';
+        } else if (err.status === 401 && err.error?.passwordProtected) {
+          this.state = 'locked';
+          this.showPasswordPrompt = true;
+        } else if (err.status===410) {
+          this.state = 'already-viewed';
         }
       }
     });
@@ -70,15 +71,21 @@ export class ViewPageComponent implements OnInit {
         this.item  = item;
         this.state = 'view';
       },
-      error: () => {
-        this.passwordError = 'Wrong password.';
+      error: (err) => {
+        if (err.status===404 || err.status===406){
+          this.state = 'not-found';
+        }else if (err.status===403){
+          this.state = 'locked';
+          this.passwordError = 'Wrong password.';
+        }else{
+          this.state = 'not-found';
+        }
       }
     });
   }
 
   startEdit() {
     if (!this.item) return;
-    this.editForm = { title: this.item.title, content: this.item.content, password: '' };
     this.editError = '';
     this.state = 'edit';
   }
@@ -87,24 +94,16 @@ export class ViewPageComponent implements OnInit {
     this.state = 'view';
   }
 
-  saveEdit() {
-    if (!this.editForm.title.trim()) { this.editError = 'Title is required.'; return; }
-    if (!this.editForm.content.trim()) { this.editError = 'Content is required.'; return; }
-
+  saveEdit(payload: any) {
     this.saving   = true;
     this.editError = '';
-
-    const payload: { title: string; content: string; password?: string } = {
-      title:   this.editForm.title.trim(),
-      content: this.editForm.content.trim(),
-      password: this.editForm.password
-    };
 
     this.itemSvc.update(this.hash, payload).subscribe({
       next: (updated) => {
         this.item   = updated;
         this.state  = 'view';
         this.saving = false;
+        // If alias changed, we might need to update URL, but skipping for simplicity
       },
       error: () => {
         this.editError = 'Failed to save. Try again.';

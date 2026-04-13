@@ -27,7 +27,7 @@ public class HashService {
         } while (itemRepository.existsByHash(hash));
         return hash;
     }
-    String hashPassword(String password) {
+    public String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] digest = md.digest(password.getBytes());

@@ -4,7 +4,11 @@ export interface Item {
   content: string;
   ownerName: string;
   ownerEmail: string;
+  alias: string;
   passwordProtected: boolean;
+  viewOnce: boolean;
+  viewed: boolean;
+  noForward: boolean;
   createdAt: string;
   updatedAt: string;
 }

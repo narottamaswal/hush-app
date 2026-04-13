@@ -1,5 +1,6 @@
 app:
   base-url: ${APP_BASE_URL}
+  redirect-url: ${APP_BASE_URL}
 
 spring:
   datasource:

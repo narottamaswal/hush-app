@@ -15,12 +15,8 @@ export class ItemService {
     return this.http.post<Item>(this.base, payload);
   }
 
-  getMeta(hash: string): Observable<Item> {
-    return this.http.get<Item>(`${this.base}/${hash}/meta`);
-  }
-
-  get(hash: string): Observable<Item> {
-    return this.http.get<Item>(`${this.base}/${hash}`);
+  get(hash: string,password: string): Observable<Item> {
+    return this.http.get<Item>(`${this.base}/${hash}`,{headers: {"X-Post-Password":password}});
   }
 
   unlock(hash: string, password: string): Observable<Item> {
@@ -33,5 +29,8 @@ export class ItemService {
 
   delete(hash: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/${hash}`);
+  }
+  checkAlias(alias: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.base}/check-alias/${alias}`);
   }
 }

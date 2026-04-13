@@ -2,20 +2,36 @@ package com.hush.app.model;
 
 
 import lombok.Data;
+
+import java.util.Optional;
+
 public class ResponseDto {
 
+//    title: [this.initialData?.title || '', [Validators.required, Validators.maxLength(200)]],
+//    content: [this.initialData?.content || '', [Validators.required]],
+//    password: [''],
+//    viewOnce: [this.initialData?.viewOnce || false],
+//    noForward: [this.initialData?.noForward || false],
+//    alias
+//
     @Data
     public static class CreateRequest {
         private String title;
         private String content;
         private String password;
-    }
+        private String alias;
+        private boolean viewOnce;
+        private boolean noForward;
+}
 
     @Data
     public static class UpdateRequest {
         private String title;
         private String content;
         private String password;
+        private String alias;
+        private boolean viewOnce;
+        private boolean noForward;
     }
 
     @Data
@@ -33,8 +49,37 @@ public class ResponseDto {
         private boolean passwordProtected;
         private String createdAt;
         private String updatedAt;
+        private String alias;
+        private boolean viewOnce;
+        private boolean noForward;
+        private boolean viewed;
+        public static Response viewed(){
+            Response r = new Response();
+            r.viewed=true;
+            return r;
+        }
 
-        public static Response from(Item item, String viewerEmail) {
+        public static Response passwordProtected(){
+            Response r = new Response();
+            r.passwordProtected=true;
+            return r;
+        }
+        public static Response list(Item item) {
+            Response r = new Response();
+            r.hash = item.getHash();
+            r.title = item.getTitle();
+            r.passwordProtected = item.getPasswordHash() != null;
+            if(!r.passwordProtected){
+                r.content = item.getContent();
+                r.ownerName = item.getOwnerName();
+                r.ownerEmail = item.getOwnerEmail();
+            }
+            r.alias = item.getAlias();
+            r.createdAt = item.getCreatedAt() != null ? item.getCreatedAt().toString() : null;
+            r.updatedAt = item.getUpdatedAt() != null ? item.getUpdatedAt().toString() : null;
+            return r;
+        }
+        public static Response from(Item item) {
             Response r = new Response();
             r.hash = item.getHash();
             r.title = item.getTitle();
@@ -42,18 +87,10 @@ public class ResponseDto {
             r.ownerName = item.getOwnerName();
             r.ownerEmail = item.getOwnerEmail();
             r.passwordProtected = item.getPasswordHash() != null;
-            r.createdAt = item.getCreatedAt() != null ? item.getCreatedAt().toString() : null;
-            r.updatedAt = item.getUpdatedAt() != null ? item.getUpdatedAt().toString() : null;
-            return r;
-        }
-
-        public static Response meta(Item item) {
-            Response r = new Response();
-            r.hash = item.getHash();
-            r.title = item.getTitle();
-            r.passwordProtected = item.getPasswordHash() != null;
-            r.ownerName = item.getOwnerName();
-            r.ownerEmail = item.getOwnerEmail();
+            r.alias = item.getAlias();
+            r.viewOnce = item.getViewOnce()!=null ? item.getViewOnce() : false;
+            r.viewed = item.getViewed()!=null ? item.getViewed() : false;
+            r.noForward = item.getNoForward()!=null ? item.getNoForward() : false;
             r.createdAt = item.getCreatedAt() != null ? item.getCreatedAt().toString() : null;
             r.updatedAt = item.getUpdatedAt() != null ? item.getUpdatedAt().toString() : null;
             return r;

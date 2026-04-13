@@ -1,0 +1,63 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="shared-form">
+
+    <div class="field">
+        <label for="title">title</label>
+        <input id="title" type="text" formControlName="title" placeholder="give it a title" [attr.disabled]="saving ? true : null" />
+        <span class="validation-error" *ngIf="form.get('title')?.touched && form.get('title')?.hasError('required')">title is required.</span>
+    </div>
+
+    <div class="field">
+        <label for="content">content</label>
+        <textarea id="content" formControlName="content" placeholder="paste your text, code, or notes here..." rows="8" [attr.disabled]="saving ? true : null"></textarea>
+        <span class="validation-error" *ngIf="form.get('content')?.touched && form.get('content')?.hasError('required')">content is required.</span>
+    </div>
+
+    <div class="field">
+        <label for="password">{{ isEdit ? 'change password' : 'password' }} <span class="optional">{{ isEdit ? '(leave blank to keep current)' : '(optional)' }}</span></label>
+        <input id="password" type="password" formControlName="password" placeholder="leave blank for public access" [attr.disabled]="saving ? true : null" />
+    </div>
+    <div class="field">
+        <label for="alias">custom alias <span class="optional">(optional)</span></label>
+        <div class="input-with-prefix">
+            <span class="prefix">hush.com/</span>
+            <input id="alias" type="text" formControlName="alias" placeholder="my-custom-url" [attr.disabled]="saving ? true : null" />
+        </div>
+        <span class="validation-status" *ngIf="form.get('alias')?.pending">checking availability... ⏳</span>
+        <span class="validation-error" *ngIf="form.get('alias')?.hasError('aliasTaken')">this alias is already taken.</span>
+        <span class="validation-error" *ngIf="form.get('alias')?.hasError('pattern')">only letters, numbers, and hyphens allowed.</span>
+    </div>
+
+    <div class="field">
+        <label for="viewOnce">VIEW ONCE</label>
+        <label class="toggle-control">
+            <input type="checkbox" formControlName="viewOnce" [attr.disabled]="saving ? true : null">
+            <span class="control-indicator"></span>
+            <span class="optional">(prevents copying/sharing)</span>
+        </label>
+    </div>
+    <div class="field">
+        <label for="noForward">NO FORWARDING</label>
+        <label class="toggle-control">
+            <input type="checkbox" formControlName="noForward" [attr.disabled]="saving ? true : null">
+            <span class="control-indicator"></span>
+            <span class="optional">(prevents copying/sharing)</span>
+        </label>
+    </div>
+
+<!--    <label class="toggle-control">-->
+<!--        <input type="checkbox" formControlName="noForward" [attr.disabled]="saving ? true : null">-->
+<!--        <span class="control-indicator"></span>-->
+<!--        <span class="toggle-label">No Forward <span class="optional">(prevents copying/sharing)</span></span>-->
+<!--    </label>-->
+<!--    <div class="toggle-row">-->
+<!--        -->
+<!--    </div>-->
+
+    <div class="form-footer">
+        <span class="error" *ngIf="externalError">{{ externalError }}</span>
+        <button type="button" class="btn-secondary" *ngIf="showCancel" (click)="onCancel()" [disabled]="saving">cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="saving || form.invalid || form.pending">
+            {{ saving ? 'Saving...' : (isEdit ? 'save changes' : 'create') }}
+        </button>
+    </div>
+</form>

@@ -25,6 +25,15 @@ public class Item {
     private String content;
 
     private String passwordHash;
+    private String alias;
+
+    private Boolean viewOnce;
+
+    private Boolean viewed;
+
+    private String fingerprint;
+
+    private Boolean noForward;
 
     @Column(nullable = false)
     private String ownerEmail;
@@ -35,6 +44,7 @@ public class Item {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
 
     @PrePersist
     public void onCreate() {

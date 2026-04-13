@@ -1,94 +1,80 @@
 <div class="page-center">
+    <!-- Viewed -->
+    <div class="state-msg" *ngIf="state === 'already-viewed'">the item you're trying to access is already viewed.</div>
 
-  <!-- LOADING -->
-  <div class="state-msg" *ngIf="state === 'loading'">Loading...</div>
+    <!-- LOADING -->
+    <div class="state-msg" *ngIf="state === 'loading'">loading...</div>
 
-  <!-- NOT FOUND -->
-  <div class="state-msg" *ngIf="state === 'not-found'">
-    <p>Item not found.</p>
-    <a routerLink="/">← Back to home</a>
-  </div>
-
-  <!-- LOCKED -->
-  <div class="locked-box" *ngIf="state === 'locked'">
-    <div class="lock-icon">🔒</div>
-    <h2>{{ item?.title }}</h2>
-    <p class="lock-sub">This hush is password protected.</p>
-    <div class="field">
-      <label for="pwd">Password</label>
-      <input
-        id="pwd"
-        type="password"
-        [(ngModel)]="password"
-        placeholder="Enter password"
-        (keyup.enter)="unlock()"
-        autofocus
-      />
-    </div>
-    <div class="lock-footer">
-      <span class="error" *ngIf="passwordError">{{ passwordError }}</span>
-      <button class="btn-primary" (click)="unlock()">Unlock</button>
-    </div>
-  </div>
-
-  <!-- VIEW -->
-  <ng-container *ngIf="state === 'view' && item">
-    <div class="item-header">
-      <div class="item-title-row">
-        <h1 class="item-title">{{ item.title }}</h1>
-        <span class="password-badge" *ngIf="item.passwordProtected">🔒 protected</span>
-      </div>
-      <div class="item-meta">
-        <span>by {{ item.ownerName }}</span>
-        <span class="dot">·</span>
-        <span>{{ formatDate(item.updatedAt) }}</span>
-        <span class="dot">·</span>
-        <button class="btn-inline" (click)="copyLink()">
-          {{ copied ? 'Copied!' : 'Copy link' }}
-        </button>
-      </div>
+    <!-- NOT FOUND -->
+    <div class="state-msg" *ngIf="state === 'not-found'">
+        <p>Item not found.</p>
+        <a routerLink="/">← back to home</a>
     </div>
 
-    <div class="item-actions" *ngIf="isOwner()">
-      <button class="btn-secondary" (click)="startEdit()">Edit</button>
-      <button class="btn-danger" (click)="deleteItem()">Delete</button>
+    <!-- LOCKED -->
+    <div class="locked-box" *ngIf="state === 'locked'">
+        <div class="lock-icon">🔒</div>
+        <h2>{{ item?.title }}</h2>
+        <p class="lock-sub">this hush is password protected.</p>
+        <div class="field">
+            <label for="pwd">password</label>
+            <input
+                    id="pwd"
+                    type="password"
+                    [(ngModel)]="password"
+                    placeholder="enter password"
+                    (keyup.enter)="load()"
+                    autofocus
+            />
+        </div>
+        <div class="lock-footer">
+            <span class="error" *ngIf="passwordError">{{ passwordError }}</span>
+            <button class="btn-primary" (click)="load()">unlock</button>
+        </div>
     </div>
 
-    <div class="item-content">
-      <pre>{{ item.content }}</pre>
-    </div>
+    <!-- VIEW -->
+    <ng-container *ngIf="state === 'view' && item">
+        <div class="item-header">
+            <div class="item-title-row">
+                <h1 class="item-title">{{ item.title }}</h1>
+                <span class="password-badge" *ngIf="item.passwordProtected">🔒 protected</span>
+            </div>
+            <div class="item-meta">
+                <span>by {{ item.ownerName }}</span>
+                <span class="dot">·</span>
+                <span>{{ formatDate(item.updatedAt) }}</span>
+                <span class="dot">·</span>
+                   <button class="btn-inline" (click)="copyLink()">
+                    {{ copied ? 'copied!' : 'copy link' }}
+                </button>
+            </div>
+        </div>
 
-    <div class="back-row">
-      <a routerLink="/">← Create new hush</a>
-    </div>
-  </ng-container>
+        <div class="item-actions" *ngIf="isOwner()">
+            <button class="btn-secondary" (click)="startEdit()">edit</button>
+            <button class="btn-danger" (click)="deleteItem()">delete</button>
+        </div>
 
-  <!-- EDIT -->
-  <ng-container *ngIf="state === 'edit'">
-    <h2 class="edit-heading">Edit hush</h2>
+        <div class="item-content">
+            <pre>{{ item.content }}</pre>
+        </div>
 
-    <div class="field">
-      <label for="etitle">Title</label>
-      <input id="etitle" type="text" [(ngModel)]="editForm.title" [disabled]="saving" />
-    </div>
+        <div class="back-row">
+            <a routerLink="/">← back to list</a>
+        </div>
+    </ng-container>
 
-    <div class="field">
-      <label for="econtent">Content</label>
-      <textarea id="econtent" [(ngModel)]="editForm.content" rows="12" [disabled]="saving"></textarea>
-    </div>
-
-    <div class="field">
-      <label for="epwd">Change password <span class="optional">(leave blank to keep current, space to remove)</span></label>
-      <input id="epwd" type="password" [(ngModel)]="editForm.password" [disabled]="saving" />
-    </div>
-
-    <div class="form-footer">
-      <span class="error" *ngIf="editError">{{ editError }}</span>
-      <button class="btn-secondary" (click)="cancelEdit()" [disabled]="saving">Cancel</button>
-      <button class="btn-primary" (click)="saveEdit()" [disabled]="saving">
-        {{ saving ? 'Saving...' : 'Save changes' }}
-      </button>
-    </div>
-  </ng-container>
-
+    <!-- EDIT -->
+    <ng-container *ngIf="state === 'edit' && item">
+        <h2 class="edit-heading">edit hush</h2>
+        <app-item-form
+                [initialData]="item"
+                [isEdit]="true"
+                [saving]="saving"
+                [externalError]="editError"
+                (submitForm)="saveEdit($event)"
+                (cancelForm)="cancelEdit()">
+        </app-item-form>
+    </ng-container>
 </div>

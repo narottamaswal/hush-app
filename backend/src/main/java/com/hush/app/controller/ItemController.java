@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,7 +41,10 @@ public class ItemController {
         Item item = itemService.create(email, name, req);
         return ResponseEntity.ok(ResponseDto.Response.list(item));
     }
-
+    @GetMapping("/check-alias/{alias}")
+    public ResponseEntity<?> aliasCheck(@PathVariable String alias){
+        return ResponseEntity.ok(itemService.isAliasAvailable(alias));
+    }
     @GetMapping("/{hash}")
     public ResponseEntity<?> getNew(@PathVariable String hash, @RequestHeader HttpHeaders headers, OAuth2AuthenticationToken auth) {
         String fingerprint = headers.getFirst(AuthUtil.X_DEVICE_FINGERPRINT);
@@ -58,60 +62,6 @@ public class ItemController {
         itemService.applyChanges(ctx, item, fingerprint);
         return ResponseEntity.ok(ResponseDto.Response.from(item));
     }
-
-//    @GetMapping("/hello/{hash}")
-//    public ResponseEntity<?> get(@PathVariable String hash, @RequestHeader HttpHeaders header,OAuth2AuthenticationToken auth) {
-//        String fingerprint = header.getFirst(X_DEVICE_FINGERPRINT);
-//        Item item = itemService.getByHash(hash);
-//        String email = AuthUtil.getEmail(auth);
-//        if(item==null){
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.Response.passwordProtected());
-//        }else if (item.getPasswordHash() != null) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.Response.passwordProtected());
-//        }else if(StringUtils.isNotBlank(email) && item.getOwnerEmail().equalsIgnoreCase(email)){
-//            return ResponseEntity.ok(ResponseDto.Response.from(item));
-//        }else if(item.getViewOnce() && item.getViewed()){
-//            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
-//        }
-//        if(item.getNoForward()){
-//            if(!StringUtils.isBlank(item.getFingerprint())){
-//                if(!item.getFingerprint().equalsIgnoreCase(fingerprint)){
-//                    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
-//                }
-//            }
-//            item.setFingerprint(fingerprint);
-//            itemService.save(item);
-//        }
-//
-//        if(item.getViewOnce()){
-//            item.setViewed(true);
-//            itemService.save(item);
-//        }
-//        return ResponseEntity.ok(ResponseDto.Response.from(item));
-//    }
-//    @PostMapping("/{hash}/unlock")
-//    public ResponseEntity<ResponseDto.Response> unlock(
-//            @PathVariable String hash,
-//            @RequestBody ResponseDto.PasswordRequest req,OAuth2AuthenticationToken auth) {
-////        String fingerprint = header.getFirst("X-Device-Fingerprint");
-//
-//        boolean validPassword = itemService.checkPassword(hash, req.getPassword());
-//        if (!validPassword) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-//        }
-//        Item item = itemService.getByHash(hash);
-//        String email = AuthUtil.getEmail(auth);
-//        if(StringUtils.isNotBlank(email) && item.getOwnerEmail().equalsIgnoreCase(email)){
-//            return ResponseEntity.ok(ResponseDto.Response.from(item));
-//        }else if(item.getViewOnce() && item.getViewed()){
-//            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
-//        }
-//        if(!item.getViewed()){
-//            item.setViewed(true);
-//            itemService.save(item);
-//        }
-//        return ResponseEntity.ok(ResponseDto.Response.from(item));
-//    }
 
 
     @PutMapping("/{hash}")

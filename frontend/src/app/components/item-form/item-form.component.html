@@ -20,10 +20,12 @@
         <label for="alias">custom alias <span class="optional">(optional)</span></label>
         <div class="input-with-prefix">
             <span class="prefix">hush.com/</span>
-            <input id="alias" type="text" formControlName="alias" placeholder="my-custom-url" [attr.disabled]="saving ? true : null" />
+            <input id="alias" type="text"   maxlength="8" formControlName="alias" placeholder="my-custom-url" [attr.disabled]="saving ? true : null" />
         </div>
         <span class="validation-status" *ngIf="form.get('alias')?.pending">checking availability... ⏳</span>
         <span class="validation-error" *ngIf="form.get('alias')?.hasError('aliasTaken')">this alias is already taken.</span>
+        <span class="validation-error" *ngIf="form.get('alias')?.hasError('minlength')">alias length should be 8 characters</span>
+        <span class="validation-error" *ngIf="form.get('alias')?.hasError('maxlength')">alias length should be 8 characters</span>
         <span class="validation-error" *ngIf="form.get('alias')?.hasError('pattern')">only letters, numbers, and hyphens allowed.</span>
     </div>
 

@@ -74,7 +74,7 @@ public class ResponseDto {
                 r.ownerName = item.getOwnerName();
                 r.ownerEmail = item.getOwnerEmail();
             }
-            r.alias = item.getAlias();
+
             r.createdAt = item.getCreatedAt() != null ? item.getCreatedAt().toString() : null;
             r.updatedAt = item.getUpdatedAt() != null ? item.getUpdatedAt().toString() : null;
             return r;
@@ -87,7 +87,6 @@ public class ResponseDto {
             r.ownerName = item.getOwnerName();
             r.ownerEmail = item.getOwnerEmail();
             r.passwordProtected = item.getPasswordHash() != null;
-            r.alias = item.getAlias();
             r.viewOnce = item.getViewOnce()!=null ? item.getViewOnce() : false;
             r.viewed = item.getViewed()!=null ? item.getViewed() : false;
             r.noForward = item.getNoForward()!=null ? item.getNoForward() : false;

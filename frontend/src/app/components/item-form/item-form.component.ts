@@ -36,23 +36,21 @@ export class ItemFormComponent implements OnInit {
             noForward: [this.initialData?.noForward || false],
             alias: [
                 this.initialData?.alias || '',
-                [Validators.pattern(/^[a-zA-Z0-9-]+$/)], // Only alphanumeric and hyphens
+                [Validators.pattern(/^[a-zA-Z0-9-]+$/),
+                    Validators.minLength(8),
+                    Validators.maxLength(8)], // Only alphanumeric and hyphens
                 [this.aliasAsyncValidator.bind(this)]    // Async validator
             ]
         });
     }
 
-    // Asynchronous validator to check if alias exists
     aliasAsyncValidator(control: AbstractControl): Observable<ValidationErrors | null> {
         if (!control.value) return of(null);
-        // If in edit mode and alias hasn't changed, it's valid
         if (this.isEdit && control.value === this.initialData?.alias) return of(null);
-
-        // Debounce the API call by 500ms so we don't spam the server on every keystroke
         return timer(500).pipe(
             switchMap(() => this.itemSvc.checkAlias(control.value)), // Assuming checkAlias returns Observable<boolean> (true = available)
             map(isAvailable => isAvailable ? null : { aliasTaken: true }),
-            catchError(() => of(null)) // On network error, fail open or handle accordingly
+            catchError(() => of(null))
         );
     }
 

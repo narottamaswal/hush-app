@@ -15,6 +15,13 @@ public class PostValidationException extends RuntimeException {
         this.status = status;
         this.body = body;
     }
+    public static PostValidationException alisAlreadyUsed() {
+        return new PostValidationException(
+                "Alias already used",
+                HttpStatus.BAD_REQUEST,
+                Map.of("error", "Alias already used")
+        );
+    }
     public static PostValidationException notFound() {
         return new PostValidationException(
                 "Item not found",

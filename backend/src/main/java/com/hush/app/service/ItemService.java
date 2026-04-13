@@ -1,10 +1,13 @@
 package com.hush.app.service;
 
+import com.hush.app.bloom.SimpleBloomFilter;
 import com.hush.app.model.Item;
 import com.hush.app.model.ResponseDto;
 import com.hush.app.repository.ItemRepository;
 import com.hush.app.validation.ItemContext;
+import com.hush.app.validation.exceptions.PostValidationException;
 import io.micrometer.common.util.StringUtils;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +23,14 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final HashService hashService;
-
+    private final SimpleBloomFilter simpleBloomFilter;
+    @PostConstruct
+    public void init() {
+        List<String> allExistingUrls = itemRepository.findAllHashes();
+        if(allExistingUrls!=null && !allExistingUrls.isEmpty()){
+            allExistingUrls.forEach(simpleBloomFilter::add);
+        }
+    }
     public List<Item> getAllByOwner(String ownerEmail) {
         return itemRepository.findByOwnerEmailOrderByUpdatedAtDesc(ownerEmail);
     }
@@ -35,6 +46,12 @@ public class ItemService {
         }
     }
 
+    public boolean isAliasAvailable(String alias){
+        if (!simpleBloomFilter.isMaybeTaken(alias)) {
+            return true;
+        }
+        return !itemRepository.existsByHash(alias);
+    }
     public Item getByHash(String hash) {
         return itemRepository
                 .findByHash(hash)
@@ -46,12 +63,18 @@ public class ItemService {
         return item.getPasswordHash().equals(hashService.hashPassword(password));
     }
 
-    public void save(Item item) {
-        itemRepository.save(item);
-    }
     public Item create(String ownerEmail, String ownerName, ResponseDto.CreateRequest req) {
         Item item = new Item();
-        item.setHash(hashService.generateUniqueHash());
+        String hash;
+        if(req.getAlias()!=null){
+            if(itemRepository.existsByHash(req.getAlias())){
+                throw PostValidationException.alisAlreadyUsed();
+            }
+            hash= req.getAlias();
+        }else{
+            hash = hashService.generateUniqueHash();
+        }
+        item.setHash(hash);
         item.setTitle(req.getTitle());
         item.setContent(req.getContent());
         item.setOwnerEmail(ownerEmail);
@@ -59,11 +82,12 @@ public class ItemService {
         item.setViewOnce(req.isViewOnce());
         item.setViewed(false);
         item.setNoForward(req.isNoForward());
-        item.setAlias(req.getAlias());
+        simpleBloomFilter.add(hash);
         if (!StringUtils.isBlank(req.getPassword())) {
             item.setPasswordHash(hashService.hashPassword(req.getPassword()));
         }
-        return itemRepository.save(item);
+        itemRepository.save(item);
+        return item;
     }
 
     public Item update(String hash, String ownerEmail, ResponseDto.UpdateRequest req) {
@@ -76,7 +100,6 @@ public class ItemService {
         item.setViewOnce(req.isViewOnce());
         item.setViewed(false);
         item.setNoForward(req.isNoForward());
-        item.setAlias(req.getAlias());
         String password = req.getPassword();
         if (password != null && !password.isBlank()) {
             item.setPasswordHash(hashService.hashPassword(password));

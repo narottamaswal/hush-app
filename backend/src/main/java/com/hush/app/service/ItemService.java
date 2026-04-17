@@ -66,7 +66,7 @@ public class ItemService {
     public Item create(String ownerEmail, String ownerName, ResponseDto.CreateRequest req) {
         Item item = new Item();
         String hash;
-        if(req.getAlias()!=null){
+        if(!StringUtils.isBlank(req.getAlias())){
             if(itemRepository.existsByHash(req.getAlias())){
                 throw PostValidationException.alisAlreadyUsed();
             }

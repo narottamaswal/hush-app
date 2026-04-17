@@ -53,9 +53,11 @@ export class ViewPageComponent implements OnInit {
           this.state = 'not-found';
         }else if (err.status === 403 && err.error?.passwordProtected) {
           this.state = 'locked';
+          this.item!.title = err.error?.title;
           this.passwordError = 'Wrong password.';
         } else if (err.status === 401 && err.error?.passwordProtected) {
           this.state = 'locked';
+          this.item!.title = err.error?.title;
           this.showPasswordPrompt = true;
         } else if (err.status===410) {
           this.state = 'already-viewed';

@@ -21,10 +21,10 @@ public class PasswordValidationStep extends ItemValidationStep {
 
         if (item.getPasswordHash() != null) {
             if (StringUtils.isBlank(password)) {
-                throw PostValidationException.passwordRequired();
+                throw PostValidationException.passwordRequired(item.getTitle());
             }
             if (!item.getPasswordHash().equals(hashService.hashPassword(password))) {
-                throw PostValidationException.wrongPassword();
+                throw PostValidationException.wrongPassword(item.getTitle());
             }
         }
         proceed(context);

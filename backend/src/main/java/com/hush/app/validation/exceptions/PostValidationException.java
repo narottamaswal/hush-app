@@ -38,19 +38,19 @@ public class PostValidationException extends RuntimeException {
     }
 
     // convenience static factories
-    public static PostValidationException passwordRequired() {
+    public static PostValidationException passwordRequired(String title) {
         return new PostValidationException(
                 "Password required",
                 HttpStatus.UNAUTHORIZED,
-                Map.of("passwordProtected",true,"error", "Password is required")
+                Map.of("passwordProtected",true,"error", "Password is required","title",title)
         );
     }
 
-    public static PostValidationException wrongPassword() {
+    public static PostValidationException wrongPassword(String title) {
         return new PostValidationException(
                 "Wrong password",
                 HttpStatus.FORBIDDEN,
-                Map.of("passwordProtected",true,"error", "Invalid password, please try again")
+                Map.of("passwordProtected",true,"error", "Invalid password","title",title)
         );
     }
 

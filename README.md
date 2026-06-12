@@ -1,7 +1,3 @@
-Built a secure paste-sharing platform with Google OAuth2 sign-in, password-protected pastes (SHA-256 hashed, never stored in plaintext), and collision-safe 8-character alphanumeric hash link generation
-Implemented view-once and no-forward access controls with token-based link sharing, allowing unauthenticated recipients to access content without requiring account registration
-Packaged frontend and backend as a single deployable Spring Boot JAR (Angular served as static resources), eliminating CORS configuration overhead and simplifying deployment to a single artifact
-Managed database schema evolution using Flyway versioned migrations, ensuring reproducible schema state across environments with zero manual SQL intervention
 
 # hushapp
 

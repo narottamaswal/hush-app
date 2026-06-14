@@ -7,7 +7,7 @@ import { ItemService } from '../../services/item.service';
 import { Item } from '../../models/item.model';
 import {ItemFormComponent} from "../../components/item-form/item-form.component";
 
-type ViewState = 'loading' | 'locked' | 'view' | 'edit' | 'not-found' | 'already-viewed';
+type ViewState = 'loading' | 'locked' | 'view' | 'edit' | 'not-found' | 'already-viewed' | 'expired';
 
 @Component({
   selector: 'app-view-page',
@@ -49,9 +49,13 @@ export class ViewPageComponent implements OnInit {
         this.state = 'view';
       },
       error: (err) => {
-        if (err.status===404 || err.status===410){
+        if (err.status === 404) {
           this.state = 'not-found';
-        }else if (err.status === 403 && err.error?.passwordProtected) {
+        } else if (err.status === 410 && err.error?.expired) {
+          this.state = 'expired';
+        } else if (err.status === 410 && err.error?.viewed) {
+          this.state = 'already-viewed';
+        } else if (err.status === 403 && err.error?.passwordProtected) {
           this.state = 'locked';
           this.item!.title = err.error?.title;
           this.passwordError = 'Wrong password.';
@@ -59,8 +63,8 @@ export class ViewPageComponent implements OnInit {
           this.state = 'locked';
           this.item!.title = err.error?.title;
           this.showPasswordPrompt = true;
-        } else if (err.status===410) {
-          this.state = 'already-viewed';
+        } else {
+          this.state = 'not-found';
         }
       }
     });

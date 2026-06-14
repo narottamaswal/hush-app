@@ -12,11 +12,12 @@ public class ItemValidationChainFactory {
     private final HashService hashService;
 
     public ItemValidationStep buildDefaultChain() {
-        ItemValidationStep password    = new PasswordValidationStep(hashService);
-        ItemValidationStep owner    = new OwnerValidationStep();
-        ItemValidationStep viewOnce    = new ViewOnceValidationStep();
+        ItemValidationStep expiry     = new ExpiredValidationStep();
+        ItemValidationStep password   = new PasswordValidationStep(hashService);
+        ItemValidationStep owner      = new OwnerValidationStep();
+        ItemValidationStep viewOnce   = new ViewOnceValidationStep();
         ItemValidationStep fingerprint = new FingerprintValidationStep();
-        password.setNext(owner).setNext(viewOnce).setNext(fingerprint);
-        return password;
+        expiry.setNext(password).setNext(owner).setNext(viewOnce).setNext(fingerprint);
+        return expiry;
     }
 }

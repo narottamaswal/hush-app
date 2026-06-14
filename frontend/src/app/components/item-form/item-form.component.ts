@@ -40,7 +40,10 @@ export class ItemFormComponent implements OnInit {
                     Validators.minLength(8),
                     Validators.maxLength(8)], // Only alphanumeric and hyphens
                 [this.aliasAsyncValidator.bind(this)]    // Async validator
-            ]
+            ],
+            expiresAt: [this.initialData?.expiresAt
+                ? this.toDatetimeLocalValue(this.initialData.expiresAt)
+                : '']
         });
     }
 
@@ -54,6 +57,13 @@ export class ItemFormComponent implements OnInit {
         );
     }
 
+    /** Converts ISO/LocalDateTime string to value compatible with datetime-local input */
+    private toDatetimeLocalValue(value: string): string {
+        if (!value) return '';
+        // Trim to "YYYY-MM-DDTHH:mm" (17 chars) which datetime-local expects
+        return value.substring(0, 16);
+    }
+
     onSubmit() {
         if (this.form.invalid) {
             this.form.markAllAsTouched();
@@ -64,6 +74,10 @@ export class ItemFormComponent implements OnInit {
         // Clean up empty password so we don't overwrite with blank
         if (!payload.password) {
             delete payload.password;
+        }
+        // Send null if no expiry set, otherwise keep ISO string as-is
+        if (!payload.expiresAt) {
+            payload.expiresAt = null;
         }
 
         this.submitForm.emit(payload);

@@ -46,14 +46,12 @@
         </label>
     </div>
 
-<!--    <label class="toggle-control">-->
-<!--        <input type="checkbox" formControlName="noForward" [attr.disabled]="saving ? true : null">-->
-<!--        <span class="control-indicator"></span>-->
-<!--        <span class="toggle-label">No Forward <span class="optional">(prevents copying/sharing)</span></span>-->
-<!--    </label>-->
-<!--    <div class="toggle-row">-->
-<!--        -->
-<!--    </div>-->
+    <div class="field">
+        <label for="expiresAt">Expires at <span class="optional">(optional)</span></label>
+        <input id="expiresAt" type="datetime-local" formControlName="expiresAt" [attr.disabled]="saving ? true : null" />
+        <span class="optional expiry-hint" *ngIf="!form.get('expiresAt')?.value">No expiry — this hush will live forever.</span>
+        <span class="validation-error" *ngIf="form.get('expiresAt')?.hasError('pastDate')">Expiry must be in the future.</span>
+    </div>
 
     <div class="form-footer">
         <span class="error" *ngIf="externalError">{{ externalError }}</span>

@@ -1,6 +1,7 @@
 package com.hush.app.service;
 
 import com.hush.app.bloom.SimpleBloomFilter;
+import com.hush.app.config.redis.RedisExpiryService;
 import com.hush.app.model.Item;
 import com.hush.app.model.ResponseDto;
 import com.hush.app.repository.ItemRepository;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +26,8 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final HashService hashService;
     private final SimpleBloomFilter simpleBloomFilter;
+    private final RedisExpiryService redisExpiryService;
+
     @PostConstruct
     public void init() {
         List<String> allExistingUrls = itemRepository.findAllHashes();
@@ -82,11 +86,15 @@ public class ItemService {
         item.setViewOnce(req.isViewOnce());
         item.setViewed(false);
         item.setNoForward(req.isNoForward());
+        if (!StringUtils.isBlank(req.getExpiresAt())) {
+            item.setExpiresAt(LocalDateTime.parse(req.getExpiresAt()));
+        }
         simpleBloomFilter.add(hash);
         if (!StringUtils.isBlank(req.getPassword())) {
             item.setPasswordHash(hashService.hashPassword(req.getPassword()));
         }
         itemRepository.save(item);
+        redisExpiryService.setExpiryAtSpecificTime(hash,"true",LocalDateTime.parse(req.getExpiresAt()));
         return item;
     }
 
@@ -100,13 +108,25 @@ public class ItemService {
         item.setViewOnce(req.isViewOnce());
         item.setViewed(false);
         item.setNoForward(req.isNoForward());
+        // Owner re-saving always clears the expired flag regardless of expiresAt
+        item.setIsExpired(false);
+        if (!StringUtils.isBlank(req.getExpiresAt())) {
+            item.setExpiresAt(LocalDateTime.parse(req.getExpiresAt()));
+        } else {
+            item.setExpiresAt(null);
+        }
         String password = req.getPassword();
         if (password != null && !password.isBlank()) {
             item.setPasswordHash(hashService.hashPassword(password));
         } else if (password != null && password.isBlank()) {
             item.setPasswordHash(null);
         }
-        return itemRepository.save(item);
+        Item saved = itemRepository.save(item);
+        // Re-register Redis expiry if a new expiresAt is provided
+        if (!StringUtils.isBlank(req.getExpiresAt())) {
+            redisExpiryService.setExpiryAtSpecificTime(hash, "true", LocalDateTime.parse(req.getExpiresAt()));
+        }
+        return saved;
     }
 
     public void delete(String hash, String ownerEmail) {

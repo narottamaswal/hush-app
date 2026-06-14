@@ -34,6 +34,9 @@ public class Item {
     private String fingerprint;
 
     private Boolean noForward;
+    private Boolean isExpired;
+
+    private LocalDateTime expiresAt;
 
     @Column(nullable = false)
     private String ownerEmail;

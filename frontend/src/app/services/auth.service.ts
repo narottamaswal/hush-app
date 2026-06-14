@@ -7,22 +7,18 @@ export class AuthService {
     private http = inject(HttpClient);
     private base = '/api';
 
+    // Starts as `undefined` (= "not yet checked").
+    // The authGuard filters on `undefined` and waits until this is resolved,
+    // so it always sees the server-verified value, never a stale localStorage cache.
     private _user = signal<User | null | undefined>(undefined);
     readonly user = this._user.asReadonly();
 
     checked = signal(false);
 
     constructor() {
-        this.initializeAuth();
-    }
-
-    private initializeAuth() {
-        const savedUser = localStorage.getItem('user_session');
-        if (savedUser) {
-            this._user.set(JSON.parse(savedUser));
-        } else {
-            this._user.set(null);
-        }
+        // Kick off the real server check immediately so the guard never has to
+        // wait longer than one /api/me round-trip.
+        this.loadUser();
     }
 
     loadUser() {
@@ -33,6 +29,7 @@ export class AuthService {
                 this.checked.set(true);
             },
             error: () => {
+                localStorage.removeItem('user_session');
                 this._user.set(null);
                 this.checked.set(true);
             }
@@ -41,7 +38,6 @@ export class AuthService {
 
     signIn() {
         window.location.href = '/oauth2/authorization/google';
-        // window.location.href = 'http://localhost:8080/oauth2/authorization/google';
     }
 
     signOut() {

@@ -1,6 +1,6 @@
 package com.hush.app.controller;
 
-import com.hush.app.config.AuthUtil;
+import com.hush.app.config.security.AuthUtil;
 import com.hush.app.model.Item;
 import com.hush.app.model.ResponseDto;
 import com.hush.app.service.ItemService;
@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor

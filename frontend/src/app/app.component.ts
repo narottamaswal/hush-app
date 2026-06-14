@@ -1,4 +1,4 @@
-import {Component, OnInit, inject, HostListener} from '@angular/core';
+import {Component, inject, HostListener} from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service';
@@ -10,13 +10,9 @@ import { AuthService } from './services/auth.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   auth = inject(AuthService);
   dropdownOpen = false;
-
-  ngOnInit() {
-    this.auth.loadUser();
-  }
 
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;

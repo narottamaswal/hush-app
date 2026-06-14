@@ -58,9 +58,15 @@ public class PostValidationException extends RuntimeException {
         return new PostValidationException(
                 "Post already viewed",
                 HttpStatus.GONE,
-                Map.of("error", "The item you're looking for is not found")
+                Map.of("viewed", true, "error", "The item you're looking for is not found")
         );
     }
 
-
+    public static PostValidationException expired() {
+        return new PostValidationException(
+                "Item expired",
+                HttpStatus.GONE,
+                Map.of("expired", true, "error", "This item has expired")
+        );
+    }
 }

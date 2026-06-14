@@ -1,6 +1,12 @@
 <div class="page-center">
-    <!-- Viewed -->
+    <!-- Already Viewed -->
     <div class="state-msg" *ngIf="state === 'already-viewed'">The item you're trying to access is already viewed.</div>
+
+    <!-- EXPIRED (non-owner) -->
+    <div class="state-msg" *ngIf="state === 'expired'">
+        <p>⏰ This item has expired and is no longer available.</p>
+        <a routerLink="/">← Back to home</a>
+    </div>
 
     <!-- LOADING -->
     <div class="state-msg" *ngIf="state === 'loading'">Loading...</div>
@@ -35,9 +41,17 @@
 
     <!-- VIEW -->
     <ng-container *ngIf="state === 'view' && item">
+
+        <!-- Expiry banner — only visible to owner when item is expired -->
+        <div class="expired-banner" *ngIf="item.isExpired && isOwner()">
+            <span class="expired-icon">⏰</span>
+            <span>This item has <strong>expired</strong> and is hidden from others. Edit and save it to restore visibility.</span>
+        </div>
+
         <div class="item-header">
             <div class="item-title-row">
                 <h1 class="item-title">{{ item.title }}</h1>
+                <span class="expired-badge" *ngIf="item.isExpired && isOwner()">⏰ expired</span>
                 <span class="password-badge" *ngIf="item.passwordProtected">🔒 protected</span>
             </div>
             <div class="item-meta">

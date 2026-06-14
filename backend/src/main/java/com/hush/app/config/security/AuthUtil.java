@@ -1,4 +1,4 @@
-package com.hush.app.config;
+package com.hush.app.config.security;
 
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 

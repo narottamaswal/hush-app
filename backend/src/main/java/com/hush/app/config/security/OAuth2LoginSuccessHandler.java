@@ -1,4 +1,4 @@
-package com.hush.app.config;
+package com.hush.app.config.security;
 
 import com.hush.app.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;

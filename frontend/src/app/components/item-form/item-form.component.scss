@@ -18,6 +18,7 @@
 
   input[type="text"],
   input[type="password"],
+  input[type="datetime-local"],
   textarea {
     border: 1px solid var(--color-border);
     padding: 10px 12px;
@@ -132,6 +133,7 @@
 
 .validation-error { color: var(--color-danger); font-size: 0.75rem; margin-top: 4px; }
 .validation-status { color: #888; font-size: 0.75rem; margin-top: 4px; }
+.expiry-hint { display: block; margin-top: 4px; }
 
 .form-footer {
   display: flex;

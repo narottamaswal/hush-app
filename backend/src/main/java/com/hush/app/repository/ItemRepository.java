@@ -15,4 +15,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query(value = "SELECT hash FROM items WHERE hash IS NOT NULL ORDER BY created_at DESC", nativeQuery = true)
     List<String> findAllHashes();
+
+    @Query(value = "SELECT * FROM items WHERE hash IS NOT NULL AND expires_at IS NOT NULL AND is_expired=false ORDER BY expires_at DESC", nativeQuery = true)
+    List<Item> findAllHashesToExpire();
 }

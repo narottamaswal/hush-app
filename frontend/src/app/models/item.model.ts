@@ -9,8 +9,10 @@ export interface Item {
   viewOnce: boolean;
   viewed: boolean;
   noForward: boolean;
+  isExpired: boolean;
   createdAt: string;
   updatedAt: string;
+  expiresAt: string | null;
 }
 
 export interface User {

@@ -1,4 +1,4 @@
-package com.hush.app.config;
+package com.hush.app.config.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

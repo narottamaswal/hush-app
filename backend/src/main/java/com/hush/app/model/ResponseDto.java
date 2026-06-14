@@ -22,7 +22,8 @@ public class ResponseDto {
         private String alias;
         private boolean viewOnce;
         private boolean noForward;
-}
+        private String expiresAt; // ISO-8601 datetime string, e.g. "2026-12-31T23:59"
+    }
 
     @Data
     public static class UpdateRequest {
@@ -32,6 +33,7 @@ public class ResponseDto {
         private String alias;
         private boolean viewOnce;
         private boolean noForward;
+        private String expiresAt; // ISO-8601 datetime string, e.g. "2026-12-31T23:59"
     }
 
     @Data
@@ -49,10 +51,13 @@ public class ResponseDto {
         private boolean passwordProtected;
         private String createdAt;
         private String updatedAt;
+        private String expiresAt;
         private String alias;
         private boolean viewOnce;
         private boolean noForward;
         private boolean viewed;
+        private boolean isExpired;
+
         public static Response viewed(){
             Response r = new Response();
             r.viewed=true;
@@ -64,6 +69,7 @@ public class ResponseDto {
             r.passwordProtected=true;
             return r;
         }
+
         public static Response list(Item item) {
             Response r = new Response();
             r.hash = item.getHash();
@@ -74,11 +80,13 @@ public class ResponseDto {
                 r.ownerName = item.getOwnerName();
                 r.ownerEmail = item.getOwnerEmail();
             }
-
+            r.isExpired = Boolean.TRUE.equals(item.getIsExpired());
             r.createdAt = item.getCreatedAt() != null ? item.getCreatedAt().toString() : null;
             r.updatedAt = item.getUpdatedAt() != null ? item.getUpdatedAt().toString() : null;
+            r.expiresAt = item.getExpiresAt() != null ? item.getExpiresAt().toString() : null;
             return r;
         }
+
         public static Response from(Item item) {
             Response r = new Response();
             r.hash = item.getHash();
@@ -90,8 +98,10 @@ public class ResponseDto {
             r.viewOnce = item.getViewOnce()!=null ? item.getViewOnce() : false;
             r.viewed = item.getViewed()!=null ? item.getViewed() : false;
             r.noForward = item.getNoForward()!=null ? item.getNoForward() : false;
+            r.isExpired = Boolean.TRUE.equals(item.getIsExpired());
             r.createdAt = item.getCreatedAt() != null ? item.getCreatedAt().toString() : null;
             r.updatedAt = item.getUpdatedAt() != null ? item.getUpdatedAt().toString() : null;
+            r.expiresAt = item.getExpiresAt() != null ? item.getExpiresAt().toString() : null;
             return r;
         }
     }

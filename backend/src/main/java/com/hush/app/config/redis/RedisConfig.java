@@ -22,8 +22,8 @@ public class RedisConfig {
         container.setConnectionFactory(connectionFactory);
 
 
-        connectionFactory.getConnection().serverCommands()
-                .setConfig("notify-keyspace-events", "Ex");
+//        connectionFactory.getConnection().serverCommands()
+//                .setConfig("notify-keyspace-events", "Ex");
 
         // Subscribe to expiry key-event notifications for all Redis databases
         container.addMessageListener(expirationListener, new PatternTopic("__keyevent@*__:expired"));
